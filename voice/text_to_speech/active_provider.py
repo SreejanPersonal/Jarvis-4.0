@@ -4,6 +4,10 @@ from voice.text_to_speech.base import BaseTTSProvider
 
 # Import all providers
 from voice.text_to_speech.providers.deepgram import DeepgramTTSProvider
+from voice.text_to_speech.providers.hearling import HearlingTTSProvider
+from voice.text_to_speech.providers.speechify import SpeechifyTTSProvider
+from voice.text_to_speech.providers.tiktok_tts import TikTokTTSProvider
+from voice.text_to_speech.providers.edge_tts import EdgeTTSProvider
 
 logger = get_logger(__name__)
 
@@ -17,7 +21,11 @@ class TTSProviderManager:
     
     # Available providers
     PROVIDERS = {
-        "deepgram": DeepgramTTSProvider
+        "deepgram": DeepgramTTSProvider,
+        "hearling": HearlingTTSProvider,
+        "speechify": SpeechifyTTSProvider,
+        "tiktok": TikTokTTSProvider,
+        "edge_tts": EdgeTTSProvider,
     }
     
     _instance = None
