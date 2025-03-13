@@ -1,2 +1,5 @@
-# dependencies
+# Core dependencies
 requests
+playsound
+aiohttp
+aiofiles
