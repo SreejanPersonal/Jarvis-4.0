@@ -41,8 +41,8 @@ class EdgeTTSProvider(BaseTTSProvider):
             default_voice = "en-US-JennyNeural"
         self.default_voice = default_voice
         
-        # Create cache directory
-        self.cache_dir = os.path.join("data", "cache")
+        # Create cache directory with absolute path
+        self.cache_dir = os.path.abspath(os.path.join("data", "cache"))
         os.makedirs(self.cache_dir, exist_ok=True)
         
         # Create paths for audio and subtitle files
