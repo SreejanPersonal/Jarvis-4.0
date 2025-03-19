@@ -1,8 +1,8 @@
 import os
-from playsound import playsound
 from core.logger import get_logger
 from voice.text_to_speech.base import BaseTTSProvider
 from typing import Optional, Dict, Any
+from utils.helpers import play_audio
 
 logger = get_logger(__name__)
 
@@ -28,23 +28,25 @@ class EdgeTTSProvider(BaseTTSProvider):
         "en-CA-LiamNeural": "en-CA-LiamNeural",
     }
 
-    def __init__(self, default_voice: str = "en-CA-LiamNeural", subtitle_file: str = "ASSETS/Subtitles_File.srt"):
+    def __init__(self, default_voice: str = "en-US-JennyNeural"):
         """
         Initialize the EdgeTTSProvider.
         
         Args:
             default_voice (str): The default voice to use.
-            subtitle_file (str): File to output subtitles.
         """
         super().__init__()
         if default_voice not in self.VOICE_OPTIONS:
-            logger.warning(f"Default voice '{default_voice}' not available; reverting to 'en-CA-LiamNeural'.")
-            default_voice = "en-CA-LiamNeural"
+            logger.warning(f"Default voice '{default_voice}' not available; reverting to 'en-US-JennyNeural'.")
+            default_voice = "en-US-JennyNeural"
         self.default_voice = default_voice
-        self.subtitle_file = subtitle_file
-        # Build a temporary output path inside data/cache for consistency.
-        self.output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../../data/cache")
-        os.makedirs(self.output_dir, exist_ok=True)
+        
+        # Create cache directory
+        self.cache_dir = os.path.join("data", "cache")
+        os.makedirs(self.cache_dir, exist_ok=True)
+        
+        # Create paths for audio and subtitle files
+        self.subtitle_file = os.path.join(self.cache_dir, "subtitles.srt")
 
     def generate_speech(self, text: str, voice: Optional[str] = None, output_path: Optional[str] = None) -> str:
         """
@@ -59,13 +61,13 @@ class EdgeTTSProvider(BaseTTSProvider):
             str: The path to the generated audio file.
         """
         voice = voice if (voice and voice in self.VOICE_OPTIONS) else self.default_voice
-        output_file = (output_path if output_path else 
-                       os.path.join(self.output_dir, f"{voice}.mp3"))
-        # Build the command string (make sure to maintain the same order of parameters).
-        command = (
-            f"edge-tts --voice \"{voice}\" --text \"{text}\" "
-            f"--write-media \"{output_file}\" --write-subtitles {self.subtitle_file}"
-        )
+        
+        # Create output file in cache directory
+        output_file = os.path.join(self.cache_dir, f"{voice}.mp3") if not output_path else output_path
+        
+        # Create a simple command just like the sample code
+        command = f'edge-tts --voice "{voice}" --text "{text}" --write-media "{output_file}" --write-subtitles "{self.subtitle_file}"'
+        
         logger.debug(f"Executing command: {command}")
         os.system(command)
         return output_file
@@ -80,9 +82,10 @@ class EdgeTTSProvider(BaseTTSProvider):
         """
         try:
             audio_path = self.generate_speech(text, voice)
-            from utils.helpers import play_audio
+            # Use the play_audio helper function
             play_audio(audio_path)
-            # Cleanup: remove the generated subtitle file and audio.
+            
+            # Cleanup: remove the subtitle file and audio file after playing
             if os.path.exists(self.subtitle_file):
                 os.remove(self.subtitle_file)
             if os.path.exists(audio_path):
