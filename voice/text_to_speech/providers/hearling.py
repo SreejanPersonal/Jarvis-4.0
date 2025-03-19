@@ -157,12 +157,14 @@ class HearlingTTSProvider(BaseTTSProvider):
         """
         Convert text to speech and play the generated audio.
         After playback, cleans up the temporary audio file.
+        
+        This method handles the async operations internally, providing a 
+        synchronous interface to match other providers.
         """
         try:
             audio_path = self.generate_speech(text, voice)
             play_audio(audio_path)
-            if os.path.exists(audio_path) and audio_path == self.temp_audio_path:
-                os.remove(audio_path)
+            # Don't remove the file here as play_audio now handles cleanup
         except Exception as e:
             logger.error(f"Failed to speak text: {e}")
 

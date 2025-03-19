@@ -1,6 +1,5 @@
 import os
 import sys
-import asyncio
 from core.logger import get_logger
 from voice.text_to_speech.active_provider import tts_manager, speak
 
@@ -33,7 +32,7 @@ def test_speechify():
         logger.error(f"Speechify test failed: {e}")
 
 
-async def test_hearling():
+def test_hearling():
     """Test Hearling TTS provider."""
     try:
         tts_manager.set_provider("hearling", email_prefix="jarvis")
@@ -43,9 +42,6 @@ async def test_hearling():
 
         hindi_text = "नमस्ते, मैं जार्विस हूं। आप कैसे हैं?"
         speak(hindi_text, "hi-IN-Wavenet-D")
-
-        # Ensure proper asynchronous cleanup
-        await provider.cleanup()
     except Exception as e:
         logger.error(f"Hearling test failed: {e}")
 
@@ -83,7 +79,7 @@ def test_edge_tts():
         logger.error(f"Edge TTS test failed: {e}")
 
 
-async def main():
+def main():
     """
     Main entry point for the Jarvis TTS tests.
     
@@ -99,7 +95,7 @@ async def main():
         test_speechify()
 
         logger.info("Testing Hearling...")
-        await test_hearling()
+        test_hearling()
 
         logger.info("Testing tiktok API Provider...")
         test_tiktok_api()
@@ -114,4 +110,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
