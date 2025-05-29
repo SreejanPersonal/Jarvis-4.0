@@ -110,14 +110,31 @@ class VoskSTTProvider(BaseRecognitionProvider):
     def _start_stream(self):
         """Start the audio stream if not already started."""
         if self.stream is None or not self.stream.is_active():
-            self.stream = self.audio.open(
-                format=pyaudio.paInt16, 
-                channels=1, 
-                rate=16000, 
-                input=True, 
-                frames_per_buffer=8192
-            )
-            self.stream.start_stream()
+            try:
+                self.stream = self.audio.open(
+                    format=pyaudio.paInt16, 
+                    channels=1, 
+                    rate=16000, 
+                    input=True, 
+                    frames_per_buffer=8192
+                )
+                logger.debug("Vosk audio stream started.")
+            except Exception as e:
+                logger.error(f"Failed to open Vosk audio stream: {e}")
+                self.stream = None
+                raise
+    
+    def _stop_listening_stream(self):
+        """Stop the audio stream and release the microphone resource gently."""
+        if self.stream and self.stream.is_active():
+            try:
+                self.stream.stop_stream()
+                self.stream.close()
+                logger.debug("Vosk audio stream stopped and closed.")
+            except Exception as e:
+                logger.error(f"Error stopping/closing Vosk audio stream: {e}")
+        self.stream = None
+
     
     def _speech_to_text_generator(self, prints: bool = True) -> Generator[str, None, None]:
         """
@@ -154,15 +171,25 @@ class VoskSTTProvider(BaseRecognitionProvider):
             prints (bool): Whether to print the transcribed text.
             
         Returns:
-            Optional[str]: The transcribed text, or None if recognition failed.
+            Optional[str]: The transcribed text. Returns an empty string "" for silence 
+                           or no speech detected, and None if a recognition error occurred.
         """
+        recognized_text = None
         try:
-            for text in self._speech_to_text_generator(prints):
-                if text:
-                    return text
+            for text_segment in self._speech_to_text_generator(prints):
+                if text_segment:
+                    recognized_text = text_segment
+                    break
+            
+            if recognized_text is None:
+                 recognized_text = ""
+
+            return recognized_text
         except Exception as e:
-            logger.error(f"Error during speech recognition: {e}")
+            logger.error(f"Error during Vosk speech recognition: {e}")
             return None
+        finally:
+            self._stop_listening_stream()
     
     def get_available_languages(self) -> Dict[str, Any]:
         """
