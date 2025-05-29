@@ -1,6 +1,7 @@
-bin/
+.bin/
 data/logs/
 venv/
 .qodo
 data/cache/
 voice/voices/assets/models/vosk/
+.env
