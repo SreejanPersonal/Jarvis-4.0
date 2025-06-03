@@ -1,4 +1,4 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, Type
 from core.logger import get_logger
 from voice.recognition.base import BaseRecognitionProvider
 
@@ -15,8 +15,7 @@ class RecognitionProviderManager:
     recognition provider and allows switching between different providers.
     """
     
-    # Available providers
-    PROVIDERS = {
+    PROVIDERS: Dict[str, Type[BaseRecognitionProvider]] = {
         "selenium_stt": SeleniumSTTProvider,
         "vosk": VoskSTTProvider,
     }
@@ -26,8 +25,8 @@ class RecognitionProviderManager:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(RecognitionProviderManager, cls).__new__(cls)
-            cls._instance._active_provider = None
-            cls._instance._initialized = False
+            cls._instance._active_provider: Optional[BaseRecognitionProvider] = None
+            cls._instance._initialized: bool = False
         return cls._instance
     
     def initialize(self, provider_name: str = "selenium_stt", **kwargs) -> None:
@@ -42,6 +41,8 @@ class RecognitionProviderManager:
             ValueError: If the provider name is invalid.
         """
         if self._initialized:
+            current_provider_name = self._active_provider.PROVIDER_NAME if self._active_provider else 'None'
+            logger.info(f"RecognitionProviderManager already initialized (current STT provider: {current_provider_name}). Call to initialize with '{provider_name}' skipped.")
             return
             
         if provider_name not in self.PROVIDERS:
@@ -52,19 +53,16 @@ class RecognitionProviderManager:
         self._active_provider = self.PROVIDERS[provider_name](**kwargs)
         self._initialized = True
     
-    def get_provider(self) -> BaseRecognitionProvider:
+    def get_provider(self) -> Optional[BaseRecognitionProvider]:
         """
         Get the currently active recognition provider.
         
         Returns:
-            BaseRecognitionProvider: The active provider instance.
-            
-        Raises:
-            RuntimeError: If the provider manager hasn't been initialized.
+            Optional[BaseRecognitionProvider]: The active provider instance, or None if not initialized
+                                              or no provider is active.
         """
         if not self._initialized:
-            self.initialize()
-            
+            logger.warning("STT RecognitionProviderManager get_provider called before initialization.")
         return self._active_provider
     
     def set_provider(self, provider_name: str, **kwargs) -> None:
@@ -84,6 +82,7 @@ class RecognitionProviderManager:
             
         logger.info(f"Switching Speech Recognition provider to: {provider_name}")
         self._active_provider = self.PROVIDERS[provider_name](**kwargs)
+        self._initialized = True
     
     def list_providers(self) -> Dict[str, str]:
         """
@@ -102,23 +101,18 @@ class RecognitionProviderManager:
             prints (bool): Whether to print the transcribed text.
             
         Returns:
-            Optional[str]: The transcribed text, or None if recognition failed.
+            Optional[str]: The transcribed text, or None if recognition failed or no provider.
         """
         provider = self.get_provider()
+        if not provider:
+            logger.error("Cannot listen: No active STT recognition provider.")
+            return None
         return provider.listen(prints)
 
-# Create a singleton instance
 recognition_manager = RecognitionProviderManager()
 
-# Convenience functions that use the active provider
 def listen(prints: bool = False) -> Optional[str]:
     """
     Listen for speech using the active recognition provider.
-    
-    Args:
-        prints (bool): Whether to print the transcribed text.
-        
-    Returns:
-        Optional[str]: The transcribed text, or None if recognition failed.
     """
     return recognition_manager.listen(prints)

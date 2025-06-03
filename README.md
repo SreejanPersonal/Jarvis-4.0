@@ -43,7 +43,7 @@
 
   **Welcome, Visionaries!** 👋 Get ready to witness the evolution of personal assistants! This repository is the official home of **Jarvis-4.0**, the most sophisticated and feature-rich Jarvis iteration ever showcased on YouTube! :youtube:
 
-  We're building something extraordinary here, and you're invited to be a part of it. This repository currently contains the foundational boilerplate. But here's the exciting part: **The complete, fully functional, and mind-blowing source code of Jarvis-4.0 will be made available to the public once this repository reaches the milestone of 1000 stars!** ⭐
+  We're building something extraordinary here, and you're invited to be a part of it. This repository currently contains the foundational boilerplate.
 
   Your star isn't just a symbol of appreciation; it's a powerful vote of confidence. It's a direct contribution to unlocking the full potential of Jarvis-4.0 and making this advanced technology accessible to everyone. Join us on this journey, let's reach 1000 stars together, and revolutionize the world of personal assistants!
 
