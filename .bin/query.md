@@ -1,0 +1,20 @@
+I want you to implement A hot word detection system in my current code structure. Let me explain you beriefly that what functionality it should have. At first when we start the programme then it will get into the hot word detection system and it will wait until we don't say a hot word and as soon as it will detect a hot word then it will shift to the speech recognition system in which it will continuously recognises the speech until and unless by default it does not get an empty speech symbolising that there was actually no input of any audio speech that it can convert into text
+Then again this particular loop will break and it will again go into the hotward detection loop where it will wake up only when we say the hot word.
+
+This will be automatic so the user doesn't have to always say a hot word before saying a command, But instead it will be done intelligently such that if the user is speaking continuously then it will not go to end but if the user stops speaking then it will automatically go into the hot word detection.
+
+I want you to take a look at the `voice\recognition\providers` Folders such that you can understand very nicely that there are two providers and you have to optimise this for both of the providers. udnerstand And analyse both of the providers and their functionality to get in depth idea that actually how things are working and how will you implement the logic for this.
+
+Remember both her very crucial and they both are very sensitive so if you try to make any changes be one hundred percent sure that it is not going to affect. Don't make changes on assumption that this particular feature must be there only in the provider. They are very sensitive and not very capableso therefore we cannot take a risk.
+
+Apart from that you have the docs.py file Which basically contains a sample documentation of how to run the pv porcupinelibrary in python. Understand and analyse it very nicely and I have put the access key in the .env file with the name PICOVOICE_API_KEY.
+
+Apart from that make sure you create a `core\config.py` File if necessary inside the root directory to configure any of the variables which you think would be better to be present there instead of being hard coded inside the code structure. Remember this is an optional requirement depending upon the use case and scenario and hence make sure to be hundred percent sure before implementing this.
+
+Lastly make sure to implement pygame instead of playsound Library for playing the sounds inside the `data\sounds` folder When you detect a hot word and break into the speech recognition system and when we enter the hot word detection system again after the speech recognition system.
+
+Apart from that also you have the entire structure of the code or the entire code based structure so you have a better idea that where the files should be placed and where the folders should be placed and keep one thing in mind that this particular code base is not at all the final it is a very basic structure and you are completely free to delete or remove any of the files which you think does not matches out with this Hotword detection implementation. So you have to choose the best place and inside the best place you are completely free to create folders and all the stuff and based on that you have to make the changes. However where you see that things are already implemented I would recommend not to delete them. However where you see that there is nothing to be implemented but there are just some dummy data and dummy information and it has no correlation with the entire code base then you are completely free to delete that particular file.
+
+Please dont confuse that then you have to delete all the files and folders and restructure everything again. Im just telling that if you think that where you are going to add the hot word implementation and that particular area requires any kind of modification then you are completely free to do the modifications.
+
+Make sure that things are very well designed and into folders and very well structured according to the guidelines mentioned in the `.windsurfrules` file.
